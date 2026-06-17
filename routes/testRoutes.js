@@ -4,10 +4,10 @@ const router = express.Router();
 const authMiddleware =
 require("../middleware/authMiddleware");
 
-router.get(
-  "/profile",
-  authMiddleware,
-  (req, res) => {
+const roleMiddleware =
+require("../middleware/roleMiddleware");
+
+router.get("/profile",authMiddleware,(req, res) => {
 
     res.json({
       message: "Protected Route",
@@ -16,5 +16,11 @@ router.get(
 
   }
 );
+router.get("/manager-only",authMiddleware,roleMiddleware("manager","admin"),(req,res)=>{
+    res.json({
+      message:
+      "Welcome Manager/Admin"
+    });
+});
 
 module.exports = router;

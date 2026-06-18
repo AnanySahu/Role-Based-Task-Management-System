@@ -10,7 +10,7 @@ const roleMiddleware =
 require("../middleware/roleMiddleware");
 
 const {
-  createWorkspace
+  createWorkspace,getMyWorkspaces
 } = require(
   "../controllers/workspaceController"
 );
@@ -27,5 +27,6 @@ router.post(
 
   createWorkspace
 );
+router.get("/",authMiddleware,getMyWorkspaces);
 
 module.exports = router;

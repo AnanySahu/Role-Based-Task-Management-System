@@ -1,7 +1,6 @@
 const Workspace = require("../model/Workspace");
 const User = require("../model/User");
-const createWorkspace =
-    async (req, res) => {
+const createWorkspace =async (req, res) => {
 
         try {
 
@@ -27,7 +26,7 @@ const createWorkspace =
             });
 
         }
-    };
+};
 const getMyWorkspaces = async (req, res) => {
     try {
 
@@ -47,12 +46,11 @@ const getMyWorkspaces = async (req, res) => {
 
     }
 };
-
 const addMember = async (req, res) => {
 
     try {
-        const { workspaceId } = req.params.workspaceId;
-        const { userId } = req.body.userId;
+        const { workspaceId } = req.params;
+        const { userId } = req.body;
         const workspace = await Workspace.findById(workspaceId);
         if (!workspace) {
             return res.status(404).json({
@@ -89,10 +87,10 @@ const addMember = async (req, res) => {
             "members",
             "name email"
         );
-
+         return res.status(200).json(updatedWorkspace);
     }
     catch (error) {
-
+        console.log(error.message);
         res.status(500).json({
             message: error.message
         });
@@ -113,7 +111,7 @@ const removeMember = async (req, res) => {
         }
 
         const member = workspace.members.find(
-            m => m.user.toString() === userId
+            m => m.toString() === userId
         );
 
         if (!member) {
@@ -123,7 +121,7 @@ const removeMember = async (req, res) => {
         }
 
         workspace.members = workspace.members.filter(
-            m => m.user.toString() !== userId
+            m => m.toString() !== userId
         );
 
         await workspace.save();
@@ -140,25 +138,33 @@ const removeMember = async (req, res) => {
 };
 const changeRoleOfMember = async (req, res) => {
     try {
-        const userId = new mongoose.Types.ObjectId(req.params.userId);
-        const workspaceId = req.params.workspaceId;
+        const { userId, workspaceId } = req.params;
         const workspace = await Workspace.findById(workspaceId);
-        if (!workspace) {
-            return res.status(403).json({ message: "Workspace does not exist" });
+        const member = workspace.members.find(
+            member => member.toString() === userId.toString()
+        );
+        if (!member) {
+            return res.status(404).json({
+                message: "User not found"
+            });
         }
-        if (!workspace.members.includes(userId)) {
-            return res.status(402).json({ message: "userId invalid" });
-        }
-        await workspace.members.deleteOne("user", userId);
-        return res.status(201).json({ message: "User removed successfully" });
+        member.role = req.body.role;
+        await workspace.save();
+        res.json({
+            message: "Role updated successfully"
+        });
     }
     catch (err) {
-
+        res.status(500).json({
+            message: err.message
+        });
     }
 }
 
 module.exports = {
     createWorkspace,
     getMyWorkspaces,
-    addMember
+    addMember,
+    removeMember,
+    changeRoleOfMember
 };

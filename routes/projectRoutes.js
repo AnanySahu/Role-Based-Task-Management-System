@@ -5,7 +5,7 @@ router.post("/", authMiddleware, createProject);
 
 router.get("/workspace/:workspaceId", authMiddleware, getWorkspaceProjects);
 
-// router.get("/:projectId", authMiddleware, getProject);
+router.get("/:projectId", authMiddleware, getProject);
 
 // router.put("/:projectId", authMiddleware, updateProject);
 

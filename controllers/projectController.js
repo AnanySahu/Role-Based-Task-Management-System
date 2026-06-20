@@ -49,7 +49,7 @@ const getWorkspaceProjects=async (req,res)=>{
        if(!workspace){
         return res.status(400).json({message:"Workspace not exists"})
        }
-       const ismember=((workspace.member.includes(m=>m.toString()===req.user.userId.toString())) || (workspace.owner.toString()===req.user.userId.toString()));
+       const ismember=((workspace.members.find(m=>(m.toString()===req.user.userId.toString()))) || (workspace.owner.toString()===req.user.userId.toString()));
        if(!ismember){
         return res.status(403).json({message:"not authorized"});
        }
@@ -58,6 +58,14 @@ const getWorkspaceProjects=async (req,res)=>{
     }
     catch(err){
         return res.status(500).json({message:err.message});
+    }
+}
+const getProject=asynce (req,res)=>{
+    try{
+
+    }
+    catch(err){
+        
     }
 }
 module.exports={
